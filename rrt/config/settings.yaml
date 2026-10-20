@@ -1,0 +1,18 @@
+app:
+  name: Roadside Research Trainer
+  version: 0.9.3
+  single_instance: true
+capture:
+  fps: 1.0
+  primary_monitor_only: true
+  save_frames: true
+hotkeys:
+  toggle_recording: F8
+  mark_waypoint: F9
+  toggle_overlay: F10
+export:
+  format: geojson
+  include_frames: false
+telemetry:
+  enabled: true
+  flush_every: 32
