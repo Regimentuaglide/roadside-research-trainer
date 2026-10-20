@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Roadside Research Trainer — Field-Side Recon Drills for Windows</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-deep: #070a18;
+    --bg-mid: #0d1230;
+    --bg-soft: #141a3d;
+    --indigo: #6366f1;
+    --indigo-2: #818cf8;
+    --cyan: #22d3ee;
+    --text: #e8ecff;
+    --muted: #9aa4cc;
+    --card: rgba(255,255,255,0.045);
+    --card-border: rgba(255,255,255,0.09);
+    --radius: 18px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1200px 700px at 15% -10%, rgba(99,102,241,0.30), transparent 60%),
+      radial-gradient(1000px 600px at 90% 0%, rgba(34,211,238,0.16), transparent 55%),
+      radial-gradient(900px 900px at 50% 120%, rgba(99,102,241,0.16), transparent 60%),
+      linear-gradient(160deg, var(--bg-deep) 0%, var(--bg-mid) 45%, #0a0f26 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- NAV ---------- */
+  .nav-outer {
+    position: sticky; top: 0; z-index: 100;
+    padding: 14px 0;
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 18px;
+    padding: 12px 20px;
+    border-radius: 16px;
+    background: rgba(16, 21, 48, 0.55);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; letter-spacing: 0.2px; font-size: 1rem;
+    white-space: nowrap;
+  }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 9px;
+    display: grid; place-items: center; font-size: 15px;
+    background: linear-gradient(135deg, var(--indigo), var(--cyan));
+    box-shadow: 0 0 18px rgba(99,102,241,0.55);
+  }
+  .brand span.accent {
+    background: linear-gradient(90deg, var(--indigo-2), var(--cyan));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 26px;
+    font-size: 0.92rem; color: var(--muted); font-weight: 500;
+  }
+  .nav-links a { transition: color .18s ease; }
+  .nav-links a:hover { color: #fff; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    border-radius: 12px; font-weight: 650; font-size: 0.95rem;
+    padding: 12px 22px; cursor: pointer; border: 1px solid transparent;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--indigo) 0%, #7c6cff 50%, var(--cyan) 130%);
+    box-shadow: 0 8px 26px rgba(99,102,241,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(99,102,241,0.6); }
+  .btn-ghost {
+    color: var(--text);
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.16);
+    backdrop-filter: blur(6px);
+  }
+  .btn-ghost:hover { transform: translateY(-2px); background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.3); }
+  .btn-sm { padding: 9px 18px; font-size: 0.88rem; border-radius: 10px; }
+
+  /* ---------- HERO ---------- */
+  .hero { padding: 84px 0 40px; text-align: center; position: relative; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 16px; border-radius: 999px;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: .4px; text-transform: uppercase;
+    color: #c7d2fe;
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(129,140,248,0.35);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    margin-bottom: 26px;
+  }
+  .pill .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+  }
+  h1 {
+    font-size: clamp(2.1rem, 5.4vw, 3.9rem);
+    line-height: 1.08;
+    letter-spacing: -1.2px;
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+  .grad-text {
+    background: linear-gradient(100deg, #c7d2fe 0%, #818cf8 35%, #22d3ee 75%, #a5f3fc 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lead {
+    max-width: 660px; margin: 0 auto 34px;
+    color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.13rem);
+  }
+  .hero-actions {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .hero-actions .btn { padding: 15px 30px; font-size: 1rem; }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px; max-width: 860px; margin: 0 auto;
+  }
+  .stat {
+    padding: 18px 14px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+  }
+  .stat b {
+    display: block; font-size: 1.22rem; font-weight: 750;
+    background: linear-gradient(90deg, #e0e7ff, #a5b4fc);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 2px;
+  }
+  .stat small { color: var(--muted); font-size: 0.78rem; letter-spacing: .3px; }
+
+  /* ---------- SECTIONS ---------- */
+  section { padding: 76px 0; }
+  .sec-head { text-align: center; margin-bottom: 48px; }
+  .sec-kicker {
+    font-size: 0.76rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--indigo-2); margin-bottom: 12px;
+  }
+  h2 {
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    letter-spacing: -0.7px; font-weight: 780; margin-bottom: 12px;
+  }
+  .sec-head p { color: var(--muted); max-width: 560px; margin: 0 auto; font-size: 0.98rem; }
+
+  /* ---------- FEATURES ---------- */
+  .features {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .card {
+    position: relative;
+    padding: 28px 24px 26px;
+    border-radius: var(--radius);
+    background: linear-gradient(170deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--indigo), var(--cyan));
+    opacity: .85;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(129,140,248,0.45);
+    box-shadow: 0 20px 44px rgba(0,0,0,0.45), 0 0 0 1px rgba(129,140,248,0.15);
+  }
+  .card .ico {
+    display: grid; place-items: center;
+    width: 46px; height: 46px; border-radius: 12px;
+    font-size: 1.35rem; margin-bottom: 16px;
+    background: rgba(99,102,241,0.14);
+    border: 1px solid rgba(129,140,248,0.28);
+  }
+  .card h3 { font-size: 1.03rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.2px; }
+  .card p { color: var(--muted); font-size: 0.9rem; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps { position: relative; max-width: 760px; margin: 0 auto; }
+  .steps::before {
+    content: ""; position: absolute;
+    left: 27px; top: 18px; bottom: 18px; width: 2px;
+    background: linear-gradient(180deg, var(--indigo), var(--cyan), transparent);
+    opacity: .6;
+  }
+  .step {
+    position: relative; display: flex; gap: 22px; align-items: flex-start;
+    padding: 0 0 36px;
+  }
+  .step:last-child { padding-bottom: 0; }
+  .step-num {
+    flex: 0 0 56px; width: 56px; height: 56px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    font-weight: 800; font-size: 1.08rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--indigo), #4f46e5);
+    border: 1px solid rgba(255,255,255,0.22);
+    box-shadow: 0 0 0 6px rgba(7,10,24,0.9), 0 8px 24px rgba(99,102,241,0.45);
+    position: relative; z-index: 2;
+  }
+  .step-body {
+    padding-top: 6px;
+  }
+  .step-body h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .step-body p { color: var(--muted); font-size: 0.93rem; max-width: 560px; }
+
+  /* ---------- FAQ ---------- */
+  .faq { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  details {
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  details[open] { border-color: rgba(129,140,248,0.4); background: rgba(99,102,241,0.07); }
+  details:hover { border-color: rgba(129,140,248,0.3); }
+  summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 18px 22px;
+    font-weight: 640; font-size: 0.97rem;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary .plus {
+    flex: 0 0 auto;
+    width: 26px; height: 26px; border-radius: 8px;
+    display: grid; place-items: center;
+    font-size: 1.2rem; font-weight: 400; line-height: 1;
+    color: var(--indigo-2);
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(129,140,248,0.25);
+    transition: transform .25s ease, color .25s ease, background .25s ease;
+  }
+  details[open] summary .plus {
+    transform: rotate(45deg);
+    color: var(--cyan);
+    background: rgba(34,211,238,0.12);
+    border-color: rgba(34,211,238,0.35);
+  }
+  details p {
+    padding: 0 22px 20px;
+    color: var(--muted); font-size: 0.92rem;
+    max-width: 660px;
+  }
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner {
+    position: relative;
+    border-radius: 24px;
+    padding: 64px 32px;
+    text-align: center;
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(99,102,241,0.18), rgba(34,211,238,0.08) 60%, rgba(13,18,48,0.6));
+    border: 1px solid rgba(129,140,248,0.30);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  }
+  .cta-banner::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(560px 320px at 50% 0%, rgba(99,102,241,0.45), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-banner > * { position: relative; z-index: 2; }
+  .cta-banner h2 { margin-bottom: 12px; }
+  .cta-banner p { color: var(--muted); max-width: 540px; margin: 0 auto 30px; font-size: 0.98rem; }
+  .cta-banner .btn { padding: 15px 34px; font-size: 1rem; }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 34px 0 44px;
+    margin-top: 20px;
+  }
+  .foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    flex-wrap: wrap;
+    color: var(--muted); font-size: 0.86rem;
+  }
+  .foot .brand { font-size: 0.92rem; }
+  .foot a.gh {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--text); font-weight: 600;
+    padding: 8px 16px; border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.04);
+    transition: background .18s ease, transform .18s ease;
+  }
+  .foot a.gh:hover { background: rgba(255,255,255,0.10); transform: translateY(-1px); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .features { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav { padding: 10px 14px; }
+    .nav-outer { padding: 10px 0; }
+    .hero { padding: 56px 0 28px; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-actions .btn { width: 100%; }
+    .stats { grid-template-columns: 1fr; }
+    .features { grid-template-columns: 1fr; }
+    section { padding: 56px 0; }
+    .steps::before { left: 23px; }
+    .step-num { flex-basis: 48px; width: 48px; height: 48px; font-size: 1rem; }
+    .cta-banner { padding: 46px 20px; }
+    .foot { flex-direction: column; align-items: flex-start; }
+    .brand span.full { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <div class="nav-outer">
+    <div class="wrap">
+      <nav class="nav">
+        <a href="#top" class="brand">
+          <span class="brand-mark">🧭</span>
+          <span>Roadside<span class="accent"> Research Trainer</span></span>
+        </a>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#how">How it works</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <a class="btn btn-primary btn-sm" href="https://gitscore.cc">Download</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div class="pill"><span class="dot"></span> Open-road research · Windows field kit</div>
+      <h1>Turn every roadside stop into<br /><span class="grad-text">structured field data.</span></h1>
+      <p class="lead">
+        Roadside Research Trainer gives field researchers a Windows desktop companion for
+        recon drills, anomaly logging, roadside specimen cataloging, and full expedition replay —
+        built for open-road research runs where the notebook has to keep up with the terrain.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://gitscore.cc">⬇ Download for Windows</a>
+        <a class="btn btn-ghost" href="https://gitscore.cc">View on GitHub</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>12.4k+</b><small>Downloads</small></div>
+        <div class="stat"><b>v2.3.1</b><small>Current release</small></div>
+        <div class="stat"><b>Windows 10 / 11</b><small>64-bit desktop</small></div>
+        <div class="stat"><b>Free &amp; open source</b><small>MIT licensed</small></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Features</div>
+        <h2>Everything a field run demands</h2>
+        <p>Six core modules that keep recon, logging, and cataloging connected — even when you are miles from a desk.</p>
+      </div>
+      <div class="features">
+        <div class="card">
+          <div class="ico">🧭</div>
+          <h3>Recon Drill Engine</h3>
+          <p>Run timed field-side observation drills with configurable checkpoints, so every roadside stop sharpens pattern recognition instead of eating the clock.</p>
+        </div>
+        <div class="card">
+          <div class="ico">⚠️</div>
+          <h3>Anomaly Logging</h3>
+          <p>Flag unusual roadside findings with severity, GPS context, and freeform notes. Anomalies stay linked to the exact waypoint where they were spotted.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🔬</div>
+          <h3>Specimen Cataloging</h3>
+          <p>Build a structured catalog of roadside specimens with tags, collection metadata, and photo references — searchable and exportable after the run.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🎞️</div>
+          <h3>Expedition Replay</h3>
+          <p>Rewind any research run along its route, replaying anomalies and catalog entries in sequence to reconstruct what happened and where.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🗺️</div>
+          <h3>Route-Aware Sessions</h3>
+          <p>Group drills, notes, and specimens by expedition leg. Switch between routes without losing context or mixing field data from different runs.</p>
+        </div>
+        <div class="card">
+          <div class="ico">📤</div>
+          <h3>Offline-First Export</h3>
+          <p>Work fully offline on the road, then export clean JSON or CSV datasets for analysis, sharing, or archival once you are back in the lab.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">How it works</div>
+        <h2>From install to field-ready in three steps</h2>
+        <p>No accounts, no cloud dependency — the trainer runs locally and keeps your research data on your machine.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Download and install</h3>
+            <p>Grab the latest Windows build, run the installer, and launch Roadside Research Trainer. It runs natively on Windows 10 and 11 with no extra dependencies.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Set up your expedition</h3>
+            <p>Create a route profile, choose a recon drill preset, and define the anomaly categories you expect to encounter on the open road.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Run the route, then replay it</h3>
+            <p>Log anomalies and catalog specimens live during the run, then use Expedition Replay to review the full sequence and export your findings.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">FAQ</div>
+        <h2>Questions from the field</h2>
+        <p>Short answers to what researchers ask most before installing.</p>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>What exactly is Roadside Research Trainer used for? <span class="plus">+</span></summary>
+          <p>It is a Windows desktop tool for open-road research runs. You use it to run field-side recon drills, log anomalies as you spot them, catalog roadside specimens, and then replay the full expedition to review your findings in order.</p>
+        </details>
+        <details>
+          <summary>Does it need an internet connection in the field? <span class="plus">+</span></summary>
+          <p>No. The trainer is offline-first: all drills, anomaly logs, and specimen records are stored locally on your machine. An internet connection is only useful when you decide to download updates or share exported datasets.</p>
+        </details>
+        <details>
+          <summary>Which Windows versions are supported? <span class="plus">+
